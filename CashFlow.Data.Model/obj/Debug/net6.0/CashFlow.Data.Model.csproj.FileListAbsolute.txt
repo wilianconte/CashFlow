@@ -1,0 +1,12 @@
+C:\Users\wilia\Downloads\Teste\CashFlow\CashFlow.Data.Model\bin\Debug\net6.0\CashFlow.Data.Model.deps.json
+C:\Users\wilia\Downloads\Teste\CashFlow\CashFlow.Data.Model\bin\Debug\net6.0\CashFlow.Data.Model.dll
+C:\Users\wilia\Downloads\Teste\CashFlow\CashFlow.Data.Model\bin\Debug\net6.0\CashFlow.Data.Model.pdb
+C:\Users\wilia\Downloads\Teste\CashFlow\CashFlow.Data.Model\obj\Debug\net6.0\CashFlow.Data.Model.csproj.AssemblyReference.cache
+C:\Users\wilia\Downloads\Teste\CashFlow\CashFlow.Data.Model\obj\Debug\net6.0\CashFlow.Data.Model.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\wilia\Downloads\Teste\CashFlow\CashFlow.Data.Model\obj\Debug\net6.0\CashFlow.Data.Model.AssemblyInfoInputs.cache
+C:\Users\wilia\Downloads\Teste\CashFlow\CashFlow.Data.Model\obj\Debug\net6.0\CashFlow.Data.Model.AssemblyInfo.cs
+C:\Users\wilia\Downloads\Teste\CashFlow\CashFlow.Data.Model\obj\Debug\net6.0\CashFlow.Data.Model.csproj.CoreCompileInputs.cache
+C:\Users\wilia\Downloads\Teste\CashFlow\CashFlow.Data.Model\obj\Debug\net6.0\CashFlow.Data.Model.dll
+C:\Users\wilia\Downloads\Teste\CashFlow\CashFlow.Data.Model\obj\Debug\net6.0\refint\CashFlow.Data.Model.dll
+C:\Users\wilia\Downloads\Teste\CashFlow\CashFlow.Data.Model\obj\Debug\net6.0\CashFlow.Data.Model.pdb
+C:\Users\wilia\Downloads\Teste\CashFlow\CashFlow.Data.Model\obj\Debug\net6.0\ref\CashFlow.Data.Model.dll
