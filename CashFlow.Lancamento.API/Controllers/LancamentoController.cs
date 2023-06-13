@@ -62,7 +62,7 @@ namespace CashFlow.Lancamento.API.Controllers
         }
         
         [HttpGet("ObterPorDia/{dia}")]
-        public async Task<List<Data.Model.Lancamento>> ObterPorDia([FromQuery] PaginationFilter filter, DateTime dia)
+        public async Task<IActionResult> ObterPorDia([FromQuery] PaginationFilter filter, DateTime dia)
         {
             var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
 
