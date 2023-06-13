@@ -9,11 +9,13 @@ namespace CashFlow.Data.Repository.Repository
         public LancamentoRepository(ICosmosDbContainerFactory cosmosDbContainerFactory) : base(cosmosDbContainerFactory)
         { }
 
-        public async Task<List<Lancamento>> ListarLancamentos()
+        public async Task<List<Lancamento>> ListarLancamentos(int PageNumber, int PageSize)
         {
-            string queryString = @$"SELECT * FROM c";
+            string queryString = @$"SELECT * FROM c OFFSET {(PageNumber - 1) * PageSize}  LIMIT {PageSize}";
 
-            FeedIterator<Lancamento> resultSetIterator = _container.GetItemQueryIterator<Lancamento>(new QueryDefinition(queryString));
+            var query = new QueryDefinition(queryString);
+
+            var resultSetIterator = _container.GetItemQueryIterator<Lancamento>(query);
 
             var results = new List<Lancamento>();
 
@@ -27,14 +29,40 @@ namespace CashFlow.Data.Repository.Repository
             return results;
         }
 
-        public Lancamento ObterPorId(string id)
+        public async Task<Lancamento> ObterPorId(string id)
         {
-            return _container.GetItemLinqQueryable<Lancamento>(true).Where(p=> p.Id == id).AsEnumerable().SingleOrDefault();
+            var partitionKey = id.Split(':')[0];
+
+            return await _container.ReadItemAsync<Lancamento>( id: id, partitionKey: new PartitionKey(partitionKey));
         }
 
-        public List<Lancamento> ObterPorDia(DateTime inseridoEm)
+        public async Task<List<Lancamento>> ObterPorDia(DateTime inseridoEm)
         {
-            return _container.GetItemLinqQueryable<Lancamento>(true).Where(p => p.Partition == Lancamento.GetPartitionFromDate(inseridoEm)).AsEnumerable().ToList();
+            var results = new List<Lancamento>();
+
+            var query = "SELECT * FROM Lancamento p WHERE p.Partition = @partition";
+
+            var parameterizedQuery = new QueryDefinition( query: query)
+                .WithParameter("@partition", Lancamento.GetPartitionFromDate(inseridoEm));
+
+            // Query multiple items from container
+            using FeedIterator<Lancamento> filteredFeed = _container.GetItemQueryIterator<Lancamento>(
+                queryDefinition: parameterizedQuery
+            );
+
+            // Iterate query result pages
+            while (filteredFeed.HasMoreResults)
+            {
+                FeedResponse<Lancamento> response = await filteredFeed.ReadNextAsync();
+
+                // Iterate query results
+                foreach (Lancamento item in response)
+                {
+                    results.Add(item);
+                }
+            }
+
+            return results;
         }
 
         public async Task InserirLancamento(Lancamento lancamento) 

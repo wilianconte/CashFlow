@@ -4,11 +4,11 @@ namespace CashFlow.Data.Repository.Interfaces
 {
     public interface ILancamentoRepository
     {
-        Task<List<Lancamento>> ListarLancamentos();
+        Task<List<Lancamento>> ListarLancamentos(int PageNumber, int PageSize);
 
-        Lancamento ObterPorId(string id);
+        Task<Lancamento> ObterPorId(string id);
 
-        List<Lancamento> ObterPorDia(DateTime inseridoEm);
+        Task<List<Lancamento>> ObterPorDia(DateTime inseridoEm);
 
         Task InserirLancamento(Lancamento lancamento);
 

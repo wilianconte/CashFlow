@@ -1,9 +1,13 @@
 using CashFlow.Domain.Interfaces;
+using CashFlow.Lancamento.API.Filter;
 using CashFlow.Lancamento.API.Models.Lancamento;
+using CashFlow.Lancamento.API.Wrappers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CashFlow.Lancamento.API.Controllers
 {
+    //https://codewithmukesh.com/blog/pagination-in-aspnet-core-webapi/
+
     [ApiController]
     [Route("[controller]")]
     public class LancamentoController : ControllerBase
@@ -22,21 +26,45 @@ namespace CashFlow.Lancamento.API.Controllers
         }
 
         [HttpGet]
-        public async Task<List<Data.Model.Lancamento>> ListarLancamentos()
+        public async Task<IActionResult> ListarLancamentos([FromQuery] PaginationFilter filter)
         {
-            return await _lancamentoService.ListarLancamentos();
+            var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
+
+            var model = await _lancamentoService.ListarLancamentos(validFilter.PageNumber, validFilter.PageSize);
+
+            var dto = model.Select(p => new LancamentoDTO 
+            {
+                Id = p.Id,
+                Valor = p.Valor,
+                InseridoEm = p.InseridoEm,
+                Excluido = p.Excluido,
+                ExcluidoEm = p.ExcluidoEm
+            }).ToList();
+
+            return Ok(new Response<List<LancamentoDTO>>(dto));
         }
 
         [HttpGet("{id}")]
-        public async Task<Data.Model.Lancamento> ObterPorId(string id)
+        public async Task<IActionResult> ObterPorId(string id)
         {
-            return _lancamentoService.ObterPorId(id);
+            var model = await _lancamentoService.ObterPorId(id);
+
+            var dtp = new LancamentoDTO 
+            {
+                Id = model.Id,
+                Valor = model.Valor,
+                InseridoEm = model.InseridoEm,
+                Excluido = model.Excluido,
+                ExcluidoEm = model.ExcluidoEm
+            };
+
+            return Ok(new Response<LancamentoDTO>(dtp));
         }
         
         [HttpGet("ObterPorDia/{dia}")]
         public async Task<List<Data.Model.Lancamento>> ObterPorDia(DateTime dia)
         {
-            return _lancamentoService.ObterPorDia(dia);
+            return await _lancamentoService.ObterPorDia(dia);
         }
 
         [HttpPost]
