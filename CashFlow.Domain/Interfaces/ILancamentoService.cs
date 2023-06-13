@@ -9,5 +9,6 @@ namespace CashFlow.Domain.Interfaces
         List<Lancamento> ObterPorDia(DateTime inseridoEm);
         Task<bool> InserirLancamentoAsync(Lancamento lancamento);
         Task<bool> ExcluirLancamento(string id);
+        Task<bool> AtualizarLancamento(string id, Lancamento lancamento);
     }
 }

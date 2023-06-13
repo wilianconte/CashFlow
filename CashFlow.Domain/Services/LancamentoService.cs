@@ -60,6 +60,15 @@ namespace CashFlow.Domain.Services
             }
         }
 
-  
+        public async Task<bool> AtualizarLancamento(string id, Lancamento lancamento)
+        {
+            var dbLancamento = ObterPorId(id);
+
+            dbLancamento.Valor = lancamento.Valor;
+
+            await LancamentoRepository.AtualizarLancamento(dbLancamento);
+
+            return true;
+        }
     }
 }

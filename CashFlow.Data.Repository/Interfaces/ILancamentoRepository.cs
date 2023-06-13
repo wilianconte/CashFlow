@@ -14,5 +14,6 @@ namespace CashFlow.Data.Repository.Interfaces
 
         Task ExcluirLancamento(string id, string partitionKey);
 
+        Task AtualizarLancamento(Lancamento dbLancamento);
     }
 }

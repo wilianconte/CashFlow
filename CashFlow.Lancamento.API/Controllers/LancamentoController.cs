@@ -1,4 +1,5 @@
 using CashFlow.Domain.Interfaces;
+using CashFlow.Lancamento.API.Models.Lancamento;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CashFlow.Lancamento.API.Controllers
@@ -39,9 +40,21 @@ namespace CashFlow.Lancamento.API.Controllers
         }
 
         [HttpPost]
-        public async Task<bool> Post(Data.Model.Lancamento lancamento)
+        public async Task<bool> InserirLancamento([FromBody] LancamentoInsertDTO lancamento)
         {
-            return await _lancamentoService.InserirLancamentoAsync(lancamento);
+            return await _lancamentoService.InserirLancamentoAsync(new Data.Model.Lancamento
+            {
+                Valor = lancamento.Valor
+            });
+        }
+
+        [HttpPut("{id}")]
+        public async Task<bool> Put(string id, [FromBody] LancamentoUpdateDTO lancamento)
+        {
+            return await _lancamentoService.AtualizarLancamento(id, new Data.Model.Lancamento 
+            {
+                Valor = lancamento.Valor
+            });
         }
 
         [HttpDelete]

@@ -46,5 +46,10 @@ namespace CashFlow.Data.Repository.Repository
         {
             await _container.DeleteItemAsync<Lancamento>(id, new PartitionKey(partitionKey));
         }
+
+        public async Task AtualizarLancamento(Lancamento dbLancamento)
+        {
+            await _container.UpsertItemAsync(dbLancamento);
+        }
     }
 }
