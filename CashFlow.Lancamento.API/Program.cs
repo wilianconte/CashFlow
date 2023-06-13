@@ -2,7 +2,6 @@ using CashFlow.Crosscutting.IoC;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 // Add services to the container.
 IoC.Configure(builder.Services, builder.Configuration);
 

@@ -28,22 +28,13 @@ namespace CashFlow.Domain.Services
             return await LancamentoRepository.ObterPorDia(PageNumber, PageSize, inseridoEm);
         }
 
-        public async Task<bool> InserirLancamentoAsync(Lancamento lancamento)
+        public async Task<Lancamento> InserirLancamentoAsync(Lancamento lancamento)
         {
-            try
-            {
-                lancamento.Partition = lancamento.InseridoEm.ToString("ddMMyyyy");
-                lancamento.Id = $"{lancamento.Partition}:{Guid.NewGuid()}";
-                lancamento.InseridoEm = DateTime.Now;
+            lancamento.Partition = lancamento.InseridoEm.ToString("ddMMyyyy");
+            lancamento.Id = $"{lancamento.Partition}:{Guid.NewGuid()}";
+            lancamento.InseridoEm = DateTime.Now;
 
-                await LancamentoRepository.InserirLancamento(lancamento);
-
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+            return await LancamentoRepository.InserirLancamento(lancamento);
         }
 
         public async Task<bool> ExcluirLancamento(string id)

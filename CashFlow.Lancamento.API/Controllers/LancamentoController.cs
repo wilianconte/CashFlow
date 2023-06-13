@@ -5,8 +5,7 @@ using CashFlow.Lancamento.API.Wrappers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CashFlow.Lancamento.API.Controllers
-{
-    //https://codewithmukesh.com/blog/pagination-in-aspnet-core-webapi/
+{    
 
     [ApiController]
     [Route("[controller]")]
@@ -49,7 +48,7 @@ namespace CashFlow.Lancamento.API.Controllers
         {
             var model = await _lancamentoService.ObterPorId(id);
 
-            var dtp = new LancamentoDTO 
+            var dto = new LancamentoDTO 
             {
                 Id = model.Id,
                 Valor = model.Valor,
@@ -58,7 +57,7 @@ namespace CashFlow.Lancamento.API.Controllers
                 ExcluidoEm = model.ExcluidoEm
             };
 
-            return Ok(new Response<LancamentoDTO>(dtp));
+            return Ok(new Response<LancamentoDTO>(dto));
         }
         
         [HttpGet("ObterPorDia/{dia}")]
@@ -82,12 +81,23 @@ namespace CashFlow.Lancamento.API.Controllers
         }
 
         [HttpPost]
-        public async Task<bool> InserirLancamento([FromBody] LancamentoInsertDTO lancamento)
+        public async Task<IActionResult> InserirLancamento([FromBody] LancamentoInsertDTO lancamento)
         {
-            return await _lancamentoService.InserirLancamentoAsync(new Data.Model.Lancamento
+            var model =  await _lancamentoService.InserirLancamentoAsync(new Data.Model.Lancamento
             {
                 Valor = lancamento.Valor
             });
+
+            var dto = new LancamentoDTO
+            {
+                Id = model.Id,
+                Valor = model.Valor,
+                InseridoEm = model.InseridoEm,
+                Excluido = model.Excluido,
+                ExcluidoEm = model.ExcluidoEm
+            };
+
+            return CreatedAtAction(nameof(ObterPorId), new { Id = dto.Id }, new Response<LancamentoDTO>(dto));
         }
 
         [HttpPut("{id}")]
@@ -104,5 +114,9 @@ namespace CashFlow.Lancamento.API.Controllers
         {
             return await _lancamentoService.ExcluirLancamento(id);
         }
+
+        #region Referencias
+        //https://codewithmukesh.com/blog/pagination-in-aspnet-core-webapi/
+        #endregion
     }
 }

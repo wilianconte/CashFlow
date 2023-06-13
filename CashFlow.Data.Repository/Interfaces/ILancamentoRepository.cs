@@ -10,7 +10,7 @@ namespace CashFlow.Data.Repository.Interfaces
 
         Task<List<Lancamento>> ObterPorDia(int PageNumber, int PageSize, DateTime inseridoEm);
 
-        Task InserirLancamento(Lancamento lancamento);
+        Task<Lancamento> InserirLancamento(Lancamento lancamento);
 
         Task ExcluirLancamento(string id, string partitionKey);
 

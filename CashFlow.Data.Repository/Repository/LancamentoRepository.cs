@@ -40,7 +40,7 @@ namespace CashFlow.Data.Repository.Repository
         {
             var results = new List<Lancamento>();
 
-            var queryString = $"SELECT * FROM Lancamento p WHERE p.Partition = @partition OFFSET {(PageNumber - 1) * PageSize}  LIMIT {PageSize}";
+            var queryString = $"SELECT * FROM Lancamento p WHERE p.partitionKey = @partition OFFSET {(PageNumber - 1) * PageSize}  LIMIT {PageSize}";
 
             var query = new QueryDefinition( query: queryString)
                 .WithParameter("@partition", Lancamento.GetPartitionFromDate(inseridoEm));
@@ -59,9 +59,11 @@ namespace CashFlow.Data.Repository.Repository
             return results;
         }
 
-        public async Task InserirLancamento(Lancamento lancamento) 
+        public async Task<Lancamento> InserirLancamento(Lancamento lancamento) 
         {
-            await _container.CreateItemAsync(lancamento, new PartitionKey(lancamento.Partition));
+            var response = await _container.CreateItemAsync(lancamento, new PartitionKey(lancamento.Partition));
+
+            return response.Resource;
         }
 
         public async Task ExcluirLancamento(string id, string partitionKey)
