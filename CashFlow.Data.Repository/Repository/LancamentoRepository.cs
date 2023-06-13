@@ -9,19 +9,26 @@ namespace CashFlow.Data.Repository.Repository
         public LancamentoRepository(ICosmosDbContainerFactory cosmosDbContainerFactory) : base(cosmosDbContainerFactory)
         { }
 
+        public async Task<Lancamento> ObterPorId(string id)
+        {
+            var partitionKey = id.Split(':')[0];
+
+            return await _container.ReadItemAsync<Lancamento>(id: id, partitionKey: new PartitionKey(partitionKey));
+        }
+
         public async Task<List<Lancamento>> ListarLancamentos(int PageNumber, int PageSize)
         {
             string queryString = @$"SELECT * FROM c OFFSET {(PageNumber - 1) * PageSize}  LIMIT {PageSize}";
 
             var query = new QueryDefinition(queryString);
 
-            var resultSetIterator = _container.GetItemQueryIterator<Lancamento>(query);
+            var iterator = _container.GetItemQueryIterator<Lancamento>(query);
 
             var results = new List<Lancamento>();
 
-            while (resultSetIterator.HasMoreResults)
+            while (iterator.HasMoreResults)
             {
-                FeedResponse<Lancamento> response = await resultSetIterator.ReadNextAsync();
+                FeedResponse<Lancamento> response = await iterator.ReadNextAsync();
 
                 results.AddRange(response.ToList());
             }
@@ -29,37 +36,24 @@ namespace CashFlow.Data.Repository.Repository
             return results;
         }
 
-        public async Task<Lancamento> ObterPorId(string id)
-        {
-            var partitionKey = id.Split(':')[0];
-
-            return await _container.ReadItemAsync<Lancamento>( id: id, partitionKey: new PartitionKey(partitionKey));
-        }
-
-        public async Task<List<Lancamento>> ObterPorDia(DateTime inseridoEm)
+        public async Task<List<Lancamento>> ObterPorDia(int PageNumber, int PageSize, DateTime inseridoEm)
         {
             var results = new List<Lancamento>();
 
-            var query = "SELECT * FROM Lancamento p WHERE p.Partition = @partition";
+            var queryString = $"SELECT * FROM Lancamento p WHERE p.Partition = @partition OFFSET {(PageNumber - 1) * PageSize}  LIMIT {PageSize}";
 
-            var parameterizedQuery = new QueryDefinition( query: query)
+            var query = new QueryDefinition( query: queryString)
                 .WithParameter("@partition", Lancamento.GetPartitionFromDate(inseridoEm));
 
-            // Query multiple items from container
-            using FeedIterator<Lancamento> filteredFeed = _container.GetItemQueryIterator<Lancamento>(
-                queryDefinition: parameterizedQuery
+            var iterator = _container.GetItemQueryIterator<Lancamento>(
+                queryDefinition: query
             );
 
-            // Iterate query result pages
-            while (filteredFeed.HasMoreResults)
+            while (iterator.HasMoreResults)
             {
-                FeedResponse<Lancamento> response = await filteredFeed.ReadNextAsync();
+                FeedResponse<Lancamento> response = await iterator.ReadNextAsync();
 
-                // Iterate query results
-                foreach (Lancamento item in response)
-                {
-                    results.Add(item);
-                }
+                results.AddRange(response.ToList());
             }
 
             return results;

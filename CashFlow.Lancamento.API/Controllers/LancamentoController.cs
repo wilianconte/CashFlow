@@ -62,9 +62,23 @@ namespace CashFlow.Lancamento.API.Controllers
         }
         
         [HttpGet("ObterPorDia/{dia}")]
-        public async Task<List<Data.Model.Lancamento>> ObterPorDia(DateTime dia)
+        public async Task<List<Data.Model.Lancamento>> ObterPorDia([FromQuery] PaginationFilter filter, DateTime dia)
         {
-            return await _lancamentoService.ObterPorDia(dia);
+            var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
+
+            var model = await _lancamentoService.ObterPorDia(validFilter.PageNumber, validFilter.PageSize, dia);
+
+            var dto = model.Select(p => new LancamentoDTO
+            {
+                Id = p.Id,
+                Valor = p.Valor,
+                InseridoEm = p.InseridoEm,
+                Excluido = p.Excluido,
+                ExcluidoEm = p.ExcluidoEm
+            }).ToList();
+
+            return Ok(new Response<List<LancamentoDTO>>(dto));
+
         }
 
         [HttpPost]
@@ -86,7 +100,7 @@ namespace CashFlow.Lancamento.API.Controllers
         }
 
         [HttpDelete]
-        public async Task<bool> ExcluirLancamento(string id, DateTime InseridoEm)
+        public async Task<bool> ExcluirLancamento(string id)
         {
             return await _lancamentoService.ExcluirLancamento(id);
         }

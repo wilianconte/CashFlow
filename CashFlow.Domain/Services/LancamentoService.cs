@@ -8,6 +8,11 @@ namespace CashFlow.Domain.Services
     {
         private readonly ILancamentoRepository LancamentoRepository;
 
+        public async Task<Lancamento> ObterPorId(string id)
+        {
+            return await LancamentoRepository.ObterPorId(id);
+        }
+
         public LancamentoService(ILancamentoRepository lancamentoRepository)
         {
             LancamentoRepository = lancamentoRepository;
@@ -18,14 +23,9 @@ namespace CashFlow.Domain.Services
             return await LancamentoRepository.ListarLancamentos(PageNumber, PageSize);
         }
 
-        public async Task<Lancamento> ObterPorId(string id)
+        public async Task<List<Lancamento>> ObterPorDia(int PageNumber, int PageSize, DateTime inseridoEm)
         {
-            return await LancamentoRepository.ObterPorId(id);
-        }
-
-        public async Task<List<Lancamento>> ObterPorDia(DateTime inseridoEm)
-        {
-            return await LancamentoRepository.ObterPorDia(inseridoEm);
+            return await LancamentoRepository.ObterPorDia(PageNumber, PageSize, inseridoEm);
         }
 
         public async Task<bool> InserirLancamentoAsync(Lancamento lancamento)
